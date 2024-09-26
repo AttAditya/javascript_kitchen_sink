@@ -2,6 +2,7 @@ var Board = function(config){
     this.root_id = config.root_id;
     this.$el = document.getElementById(this.root_id);
     this.generateBoardDom();
+    this.isWhiteTurn = true;
     this.addListeners();
 }
 
@@ -62,12 +63,18 @@ Board.prototype.boardClicked = function(event){
     const clickedCell = this.getClickedBlock(event);
     const selectedPiece = this.getPieceAt(clickedCell)
     if(selectedPiece){
+        if ((this.isWhiteTurn && selectedPiece.color === 'black') || 
+        (!this.isWhiteTurn && selectedPiece.color === 'white')) {
+        alert("It's not your turn!");
+        return;
+    }
         //Add 'selected' class to the clicked piece    
         this.selectPiece(event.target, selectedPiece);
     }else{
         //update position of the selected piece to new position
         if(this.selectedPiece){
-            this.selectedPiece.moveTo(clickedCell);        
+            this.selectedPiece.moveTo(clickedCell);  
+            this.isWhiteTurn = !this.isWhiteTurn;      
         }                
     }    
 }
