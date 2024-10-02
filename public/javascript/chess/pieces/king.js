@@ -16,7 +16,7 @@ King.prototype.isValidPosition = function(targetPosition){
     let colDiff = Math.abs(targetCol.charCodeAt(0) - currentCol.charCodeAt(0));
 
     if (rowDiff <= 1 && colDiff <= 1) {
-        return true; // Valid move
+        return true;
     }
 
     console.warn("Invalid move for king");
@@ -25,9 +25,9 @@ King.prototype.isValidPosition = function(targetPosition){
 
 King.prototype.moveTo = function(targetPosition){
     if (this.isValidPosition(targetPosition)) {
-        this.position = targetPosition.col + targetPosition.row;
-        this.render();
-    } else {
-        //NOOP
+        console.warn(`Invalid move for ${this.type}`);
     }
+    
+    this.position = targetPosition.col + targetPosition.row;
+    this.render();
 }
