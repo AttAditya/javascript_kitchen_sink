@@ -13,10 +13,10 @@ var Piece = function(config){
         this.render();        
     }    
 }
+
 Piece.prototype.moveTo = function(targetPosition){
     console.log("Method not implemeted by: " + this.type);
 }
-
 
 Piece.prototype.attachListeners = function(){
     //To be implemented
@@ -29,6 +29,36 @@ Piece.prototype.clearGhost = function() {
     }
 
     this.$el = null;
+}
+
+Piece.prototype.getValidCells = function(board) {
+    if (!this.isValidPosition) {
+        return [];
+    }
+
+    let rows = "12345678";
+    let cols = "ABCDEFGH";
+
+    let validCells = [];
+
+    for (let row of rows) {
+        for (let col of cols) {
+            let cellPosition = {
+                col: col,
+                row: row
+            }
+
+            if (this.position == col + row) {
+                continue;
+            }
+
+            if (this.isValidPosition(cellPosition, board)) {
+                validCells.push(col + row);
+            }
+        }
+    }
+
+    return validCells;
 }
 
 Piece.prototype.render = function(){
