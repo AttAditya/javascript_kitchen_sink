@@ -72,6 +72,9 @@ Board.prototype.clearSelection = function(){
     allPieces.forEach(piece => {
         piece.classList.remove('selected');
     });
+
+    let previousDestinations = this.$el.querySelectorAll(".destination-cell");
+    previousDestinations.forEach(el => el.classList.remove("destination-cell"));
 };
 
 Board.prototype.endGame = function() {
@@ -134,10 +137,24 @@ Board.prototype.boardClicked = function(event){
         // Add 'selected' class to the clicked piece
         this.clearSelection();
         this.selectPiece(event.target, selectedPiece);
+
+        let targetCells = selectedPiece.getValidCells(this);
+        this.highlightTargetCells(targetCells);
+        
         return;
     }
 
     this.movePiece(clickedCell);
+}
+
+Board.prototype.highlightTargetCells = function(cells) {
+    for (let cell of cells) {
+        let col = cell[0];
+        let row = cell[1];
+
+        let cellEl = this.$el.querySelector(`[data-col="${col}"] [data-row="${row}"]`);
+        cellEl.classList.add("destination-cell");
+    }
 }
 
 Board.prototype.getPieceAt = function(cell){
