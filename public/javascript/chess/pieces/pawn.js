@@ -7,42 +7,76 @@ var Pawn = function(config){
 
 Pawn.prototype = new Piece({});
 
-Pawn.prototype.isValidPosition = function(targetPosition){
-    // Convert current position to row and column
-    let currentCol = this.position.charAt(0);
-    let currentRow = parseInt(this.position.charAt(1));
+Pawn.prototype.isValidPosition = function(targetPosition, board){
+    let rows = "12345678";
+    let cols = "ABCDEFGH";
 
-    // Calculate the allowed move distance based on pawn color
-    let moveDistance = this.color === 'white' ? 1 : -1;
-    let initialRow = this.color === 'white' ? 2 : 7;
+    let row = targetPosition.row;
+    let col = targetPosition.col;
 
-    // Check if the move is valid
-    if (targetPosition.col === currentCol) {
-        // Moving straight
-        if (targetPosition.row === (currentRow + moveDistance).toString()) {
-            // Regular one-square move
-            return true;
-        } else if (currentRow === initialRow && targetPosition.row === (currentRow + 2 * moveDistance).toString()) {
-            // Initial two-square move
-            return true;
+    let yDiff = rows.indexOf(row) - rows.indexOf(this.position[1]);
+    let xDiff = cols.indexOf(col) - cols.indexOf(this.position[0]);
+
+    let yDist = Math.abs(yDiff);
+    let yDir = Math.sign(yDiff);
+
+    let xDist = Math.abs(xDiff);
+
+    if (yDir == 0) {
+        return false;
+    }
+
+    if (this.isColor(COLOR.WHITE) && yDir < 0) {
+        return false;
+    }
+
+    if (this.isColor(COLOR.BLACK) && yDir > 0) {
+        return false;
+    }
+
+    if (yDist > 2) {
+        return false;
+    }
+
+    if (this.isColor(COLOR.WHITE) && this.position[1] != "2" && yDist >= 2) {
+        return false;
+    }
+
+    if (this.isColor(COLOR.BLACK) && this.position[1] != "7" && yDist >= 2) {
+        return false;
+    }
+
+    let blockingPiece = board.getPieceAt({
+        row: row,
+        col: col
+    });
+
+    if (xDist == 0 && !blockingPiece) {
+        let cellPosition = {
+            row: (Number(row) + yDir) + '',
+            col: col
+        };
+
+        if (yDist == 2 && this.isValidPosition(cellPosition)) {
+            return false;
         }
-    } else if (Math.abs(targetPosition.col.charCodeAt(0) - currentCol.charCodeAt(0)) === 1 &&
-               targetPosition.row === (currentRow + moveDistance).toString()) {
-        // Diagonal capture (assuming there's an enemy piece, which should be checked in the main game logic)
+
         return true;
     }
 
-    // If none of the above conditions are met, the move is invalid
-    console.warn("Invalid move for pawn");
+    if (xDist == 1 && yDist == 1 && blockingPiece && !blockingPiece.isColor(this.color)) {
+        return true;
+    }
+
     return false;
 }
 
-Pawn.prototype.moveTo = function(targetPosition){    
-    if(this.isValidPosition(targetPosition)){
-        this.position = targetPosition.col + targetPosition.row;
-        this.render();
-    }else{
-        //NOOP
+Pawn.prototype.moveTo = function(targetPosition, board){    
+    if(!this.isValidPosition(targetPosition, board)){
+        console.warn("Invalid move for pawn");
+        return;
     }
-    
+
+    this.position = targetPosition.col + targetPosition.row;
+    this.render();
 }
