@@ -8,36 +8,21 @@ Bishop.prototype = new Piece({});
 Bishop.prototype.moveTo = function(targetPosition, board){
     console.log(`Attempting to move bishop from ${this.position} to ${targetPosition.col}${targetPosition.row}`);
     
-    var isValidMove = this.isValidMove(targetPosition, board);
+    var isValidMove = this.isValidPosition(targetPosition, board);
     if (!isValidMove) {
-        console.log("Invalid move for bishop");
+        console.warn("Invalid move for bishop");
         return;
     }
     
-    console.log("Move is valid. Proceeding with move.");
-    
-    // // Check if there's a piece to kill
-    // var pieceAtTarget = board.getPieceAt(targetPosition);
-    // if (pieceAtTarget) {
-    //     console.log(`Piece found at target: ${pieceAtTarget.color} ${pieceAtTarget.type}`);
-    //     if (pieceAtTarget.color !== this.color) {
-    //         console.log("Attempting to kill piece");
-    //         this.kill(pieceAtTarget);
-    //     } else {
-    //         console.log("Cannot kill own piece. Move aborted.");
-    //         return;
-    //     }
-    // } else {
-    //     console.log("No piece at target position.");
-    // }
-    
     var newPos = targetPosition.col + targetPosition.row;
+    
     this.position = newPos;
     this.render();
+
     console.log(`Bishop successfully moved to ${this.position}`);
 }
 
-Bishop.prototype.isValidMove = function(targetPosition, board) {
+Bishop.prototype.isValidPosition = function(targetPosition, board) {
     var currentRow = parseInt(this.position[1], 10);
     var targetRow = parseInt(targetPosition.row, 10);
     var currentCol = this.position[0].toUpperCase();

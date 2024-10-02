@@ -143,8 +143,6 @@ Rook.prototype.getValidRightCells = function(board) {
             continue;
         }
         
-        console.log(this.position, cellPosition.col + cellPosition.row);
-
         let piece = board.getPieceAt(cellPosition);
         if (piece && piece.isColor(this.color)) {
             break;
